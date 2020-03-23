@@ -24,45 +24,75 @@ let insults = [
     "Were you even trying?",
 ];
 
+
 let farmCallback = function (input) {
-    let direction = input.toUpperCase();
-    switch (direction) {
-        case "S":
-            rl.question(config.fieldMessage, fieldCallback);
-    }
+    currentLocation = 'farm';
+    tick(input);
 }
 
 let beachCallback = function (input) {
-    let direction = input.toUpperCase();
-    switch (direction) {
-        case "E":
-            rl.question(config.fieldMessage, fieldCallback);
-    }
+    currentLocation = 'beach';
+    tick(input);
 }
 
 let fieldCallback = function (input) {
+    currentLocation = 'field';
+    tick(input);
+}
+
+let tick = (input) => {
     let direction = input.toUpperCase();
     switch (direction) {
         case "N":
-            // console.log(config.winningMessage);
-            rl.question(config.farmMessage, farmCallback);
+            if (currentLocation === 'field') {
+                rl.question(config.farmMessage, farmCallback);
+            } else if (currentLocation === 'farm') {
+                die();
+            } else if (currentLocation === 'beach') {
+                die();
+            }
             break;
         case "W":
-            rl.question(config.beachMessage, beachCallback);
+            if (currentLocation === 'field') {
+                rl.question(config.beachMessage, beachCallback);
+            } else if (currentLocation === 'farm') {
+                die();
+            } else if (currentLocation === 'beach') {
+                die();
+            }
             break;
         case "S":
+            if (currentLocation === 'farm') {
+                rl.question(config.fieldMessage, fieldCallback);
+            } else if (currentLocation === 'field') {
+                die();
+            } else if (currentLocation === 'beach') {
+                die();
+            }
         case "E":
-            console.log(config.losingMessage);
-            break;
+            if (currentLocation === 'beach') {
+                rl.question(config.fieldMessage, fieldCallback);
+            } else if (currentLocation === 'field') {
+                die();
+            } else if (currentLocation === 'farm') {
+                die();
+            }
         default:
             let rnd = Math.floor(Math.random() * insults.length);
             console.log(insults[rnd]);
+            process.exit();
     }
-
-    // process.exit();
 }
 
-rl.question(config.fieldMessage, fieldCallback);
+let die = () => {
+    console.log(config.losingMessage);
+    process.exit();
+}
+
+
+
+let currentLocation = "field";
+rl.question(config.fieldMessage, tick);
 
 
 
