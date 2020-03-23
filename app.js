@@ -6,11 +6,30 @@ const rl = readline.createInterface({
 });  // Wire up the input and output of the readline library to the terminal
 
 let config = {
-    fieldMessage: "You are standing in a field. There is a farm to the north. There is a sea to the west.\r\n",
     winningMessage: "You reached the farm! The land rejoices in your great victory!\r\n",
     losingMessage: "You have died!  Horribly! Nobody celebrates. Everyone is sad.\r\n",
-    farmMessage: "You are standing at a farm. There is a field to the south.\r\n",
-    beachMessage: "You are at the beach. Your feet are wet. There is a field to the east.\r\n"
+    field: {
+        message: "You are standing in a field. There is a farm to the north. There is a sea to the west.\r\n",
+        locations: {
+            N: 'farm',
+            W: 'beach'
+        }
+    },
+    farm: {
+        message: "You are standing at a farm. There is a field to the south.\r\n",
+        locations: {
+            S: 'field',
+            SW: 'beach'
+        }
+    },
+    beach: {
+        message: "You are at the beach. Your feet are wet. There is a field to the east.\r\n",
+        locations: {
+            N: 'farm',
+            E: 'field',
+            SW: 'beach'
+        }
+    },
 };
 
 let insults = [
@@ -24,59 +43,20 @@ let insults = [
     "Were you even trying?",
 ];
 
-
-let farmCallback = function (input) {
-    currentLocation = 'farm';
-    tick(input);
-}
-
-let beachCallback = function (input) {
-    currentLocation = 'beach';
-    tick(input);
-}
-
-let fieldCallback = function (input) {
-    currentLocation = 'field';
-    tick(input);
-}
-
-let tick = (input) => {
+let handleUserInput = (input) => {
     let direction = input.toUpperCase();
     switch (direction) {
         case "N":
-            if (currentLocation === 'field') {
-                rl.question(config.farmMessage, farmCallback);
-            } else if (currentLocation === 'farm') {
-                die();
-            } else if (currentLocation === 'beach') {
-                die();
-            }
-            break;
         case "W":
-            if (currentLocation === 'field') {
-                rl.question(config.beachMessage, beachCallback);
-            } else if (currentLocation === 'farm') {
-                die();
-            } else if (currentLocation === 'beach') {
-                die();
-            }
-            break;
         case "S":
-            if (currentLocation === 'farm') {
-                rl.question(config.fieldMessage, fieldCallback);
-            } else if (currentLocation === 'field') {
-                die();
-            } else if (currentLocation === 'beach') {
-                die();
-            }
         case "E":
-            if (currentLocation === 'beach') {
-                rl.question(config.fieldMessage, fieldCallback);
-            } else if (currentLocation === 'field') {
-                die();
-            } else if (currentLocation === 'farm') {
+        case "SW":
+            currentLocation = config[currentLocation].locations[direction];
+            if (currentLocation === "" || currentLocation === undefined) { // TODO: Explain &&, || and truthy/falsy
                 die();
             }
+            stateLocation();
+            break;
         default:
             let rnd = Math.floor(Math.random() * insults.length);
             console.log(insults[rnd]);
@@ -89,10 +69,12 @@ let die = () => {
     process.exit();
 }
 
+let stateLocation = () => {
+    rl.question(config[currentLocation].message, handleUserInput);
+}
 
-
-let currentLocation = "field";
-rl.question(config.fieldMessage, tick);
+let currentLocation = "farm";
+stateLocation();
 
 
 
