@@ -6,9 +6,11 @@ const rl = readline.createInterface({
 });  // Wire up the input and output of the readline library to the terminal
 
 let config = {
-    startingMessage: "You are standing in a field.  There is a farm to the north.\r\n",
-    winningMessage: "You reached the farm!  The land rejoices in your great victory!",
-    losingMessage: "You have died!  Horribly!  Nobody celebrates.  Everyone is sad."
+    fieldMessage: "You are standing in a field. There is a farm to the north. There is a sea to the west.\r\n",
+    winningMessage: "You reached the farm! The land rejoices in your great victory!\r\n",
+    losingMessage: "You have died!  Horribly! Nobody celebrates. Everyone is sad.\r\n",
+    farmMessage: "You are standing at a farm. There is a field to the south.\r\n",
+    beachMessage: "You are at the beach. Your feet are wet. There is a field to the east.\r\n"
 };
 
 let insults = [
@@ -17,29 +19,38 @@ let insults = [
     "Who taught you to type?",
     "Can't you do anything right?",
     "You realise that this is a text adventure, right?",
-    "lksdjfh;lsdjhfsdk.  There!  That's how it feels!  Not nice, is it?",
+    "lksdjfh;lsdjhfsdk. There! That's how it feels! Not nice, is it?",
     "Do you even have working fingers?",
     "Were you even trying?",
 ];
 
-let callback2 = function (input) {
+let farmCallback = function (input) {
     let direction = input.toUpperCase();
     switch (direction) {
         case "S":
-            rl.question("You are standing in a field.  There is a farm to the north.\r\n", inputReceivedCallback);
+            rl.question(config.fieldMessage, fieldCallback);
     }
 }
 
-let inputReceivedCallback = function (input) {
+let beachCallback = function (input) {
+    let direction = input.toUpperCase();
+    switch (direction) {
+        case "E":
+            rl.question(config.fieldMessage, fieldCallback);
+    }
+}
+
+let fieldCallback = function (input) {
     let direction = input.toUpperCase();
     switch (direction) {
         case "N":
             // console.log(config.winningMessage);
-            rl.question("You are standing at a farm.  There is a field to the south.\r\n", callback2);
-
+            rl.question(config.farmMessage, farmCallback);
+            break;
+        case "W":
+            rl.question(config.beachMessage, beachCallback);
             break;
         case "S":
-        case "W":
         case "E":
             console.log(config.losingMessage);
             break;
@@ -51,7 +62,7 @@ let inputReceivedCallback = function (input) {
     // process.exit();
 }
 
-rl.question(config.startingMessage, inputReceivedCallback);
+rl.question(config.fieldMessage, fieldCallback);
 
 
 
