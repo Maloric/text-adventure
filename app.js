@@ -1,9 +1,9 @@
-const readline = require('readline');
+const readline = require('readline'); // Importing the "readline" library and assigning it to a local variable
 
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
-});
+});  // Wire up the input and output of the readline library to the terminal
 
 let config = {
     startingMessage: "You are standing in a field.  There is a farm to the north.\r\n",
@@ -22,12 +22,21 @@ let insults = [
     "Were you even trying?",
 ];
 
+let callback2 = function (input) {
+    let direction = input.toUpperCase();
+    switch (direction) {
+        case "S":
+            rl.question("You are standing in a field.  There is a farm to the north.\r\n", inputReceivedCallback);
+    }
+}
 
-rl.question(config.startingMessage, function (input) {
-    let direction = input.toUpperCase()
+let inputReceivedCallback = function (input) {
+    let direction = input.toUpperCase();
     switch (direction) {
         case "N":
-            console.log(config.winningMessage);
+            // console.log(config.winningMessage);
+            rl.question("You are standing at a farm.  There is a field to the south.\r\n", callback2);
+
             break;
         case "S":
         case "W":
@@ -39,8 +48,10 @@ rl.question(config.startingMessage, function (input) {
             console.log(insults[rnd]);
     }
 
-    process.exit();
-});
+    // process.exit();
+}
+
+rl.question(config.startingMessage, inputReceivedCallback);
 
 
 
