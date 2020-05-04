@@ -5,6 +5,17 @@ const rl = readline.createInterface({
     output: process.stdout
 });  // Wire up the input and output of the readline library to the terminal
 
+// let x = 1; // variable
+// let y = {
+//     z: 1 // property
+// };
+
+// let print = (msg) => { // parameter
+//     console.log(msg);
+// }
+
+// print(x);
+
 let config = {
     winningMessage: "You reached the farm! The land rejoices in your great victory!\r\n",
     losingMessage: "You have died!  Horribly! Nobody celebrates. Everyone is sad.\r\n",
@@ -13,14 +24,19 @@ let config = {
         locations: {
             N: 'farm',
             W: 'beach'
-        }
+        },
+        items: [
+            'Sword',
+            'Bucket'
+        ]
     },
     farm: {
         message: "You are standing at a farm. There is a field to the south.\r\n",
         locations: {
             S: 'field',
             SW: 'beach'
-        }
+        },
+
     },
     beach: {
         message: "You are at the beach. Your feet are wet. There is a field to the east.\r\n",
@@ -50,12 +66,11 @@ let handleUserInput = (input) => {
         case "W":
         case "S":
         case "E":
-        case "SW":
             currentLocation = config[currentLocation].locations[direction];
             if (currentLocation === "" || currentLocation === undefined) { // TODO: Explain &&, || and truthy/falsy
                 die();
             }
-            stateLocation();
+            describeLocation();
             break;
         default:
             let rnd = Math.floor(Math.random() * insults.length);
@@ -69,9 +84,18 @@ let die = () => {
     process.exit();
 }
 
-let stateLocation = () => {
-    rl.question(config[currentLocation].message, handleUserInput);
+let describeLocation = () => {
+    let location = config[currentLocation];
+    let items = location.items;
+    let message = location.message;
+    let itemsFound = items && items.length > 0; // true if there are items, otherwise false
+
+    if (itemsFound === true) {
+        message = message + ' The following items can be found here: ' + items.join(', ');
+    }
+
+    rl.question(message, handleUserInput);
 }
 
 let currentLocation = "farm";
-stateLocation();
+describeLocation();
