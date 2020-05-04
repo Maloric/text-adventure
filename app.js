@@ -75,6 +75,3 @@ let stateLocation = () => {
 
 let currentLocation = "farm";
 stateLocation();
-
-
-
