@@ -59,18 +59,35 @@ let insults = [
     "Were you even trying?",
 ];
 
+// get sword
+
+
 let handleUserInput = (input) => {
-    let direction = input.toUpperCase();
-    switch (direction) {
+    let command = input.toUpperCase();
+    let verb = command.split(" ")[0];
+    let noun = command.split(" ")[1];
+    switch (verb) {
         case "N":
         case "W":
         case "S":
         case "E":
-            currentLocation = config[currentLocation].locations[direction];
-            if (currentLocation === "" || currentLocation === undefined) { // TODO: Explain &&, || and truthy/falsy
+            currentLocation = config[currentLocation].locations[command];
+            if (!currentLocation) {
                 die();
             }
             describeLocation();
+            break;
+        case "GET":
+            let items = config[currentLocation].items || [];
+            let isFound = items.map(x => x.toUpperCase()).indexOf(noun) > -1; // TODO: Explain map function
+            if (noun === "" || noun === undefined || !isFound) { // TODO: Explain &&, || and truthy/falsy
+                console.log("IDIOT");
+            }
+            else {
+                console.log("Yay you picked up a " + noun);
+            }
+            describeLocation();
+
             break;
         default:
             let rnd = Math.floor(Math.random() * insults.length);
@@ -91,7 +108,7 @@ let describeLocation = () => {
     let itemsFound = items && items.length > 0; // true if there are items, otherwise false
 
     if (itemsFound === true) {
-        message = message + ' The following items can be found here: ' + items.join(', ');
+        message = message + ' The following items can be found here: ' + items.join(', ') + '\n';
     }
 
     rl.question(message, handleUserInput);
